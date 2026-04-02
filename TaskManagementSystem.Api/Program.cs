@@ -21,14 +21,16 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 
 // Register FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<TaskCreateDtoValidator>();
 
-// Swagger implicitly supported but we will ensure swagger UI runs nicely via default OpenApi
-// Note: In .NET 9/10, AddOpenApi() is the standard without swashbuckle, but Swashbuckle can still be used for a UI. Let's use scalar or swagger-ui.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -49,7 +51,6 @@ builder.Services.AddHostedService<TaskManagementSystem.Api.BackgroundServices.Re
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -57,12 +58,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// Enable CORS
 app.UseCors("AllowReactApp");
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
