@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TaskManagementSystem.Api.Models;
 
 public enum TaskPriority { Low, Medium, High }
@@ -5,7 +7,10 @@ public enum TaskPriority { Low, Medium, High }
 public class TaskEntity
 {
     public int Id { get; set; }
+    [MaxLength(100)]
     public string Title { get; set; } = string.Empty;
+    
+    [MaxLength(500)]
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? DueDate { get; set; }
