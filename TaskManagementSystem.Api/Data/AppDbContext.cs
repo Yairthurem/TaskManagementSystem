@@ -13,6 +13,24 @@ public class AppDbContext : DbContext
     public DbSet<TaskTag> TaskTags { get; set; }
     public DbSet<RemindersLog> RemindersLogs { get; set; }
 
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is Microsoft.Data.SqlClient.SqlException sqlEx)
+        {
+            if (sqlEx.Number == 2601 || sqlEx.Number == 2627)
+                throw new TaskManagementSystem.Api.Exceptions.DuplicateResourceException("This record already exists. Please check for duplicate emails or tags.");
+            
+            if (sqlEx.Number == 547)
+                throw new TaskManagementSystem.Api.Exceptions.ReferenceNotFoundException("A related record was not found. Please ensure the User ID or Tag IDs exist.");
+            
+            throw;
+        }
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

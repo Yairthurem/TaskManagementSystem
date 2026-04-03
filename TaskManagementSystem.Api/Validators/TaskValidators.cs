@@ -11,6 +11,9 @@ public class TaskCreateDtoValidator : AbstractValidator<TaskCreateDto>
         RuleFor(x => x.Description).MaximumLength(500);
         RuleFor(x => x.UserId).GreaterThan(0).WithMessage("User ID must be a valid positive number.");
         RuleFor(x => x.Priority).IsInEnum().WithMessage("Priority must be a valid option.");
+        RuleFor(x => x.DueDate)
+            .Must(date => !date.HasValue || date.Value.Date >= DateTime.UtcNow.Date)
+            .WithMessage("Due Date cannot be in the past.");
         RuleForEach(x => x.TagIds).GreaterThan(0).WithMessage("All Tag IDs must be valid positive numbers.").When(x => x.TagIds != null);
     }
 }

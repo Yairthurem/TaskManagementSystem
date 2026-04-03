@@ -26,6 +26,18 @@ public class GlobalExceptionMiddleware
             context.Response.StatusCode = (int)HttpStatusCode.NotFound;
             await context.Response.WriteAsync(JsonSerializer.Serialize(new { Message = ex.Message }));
         }
+        catch (TaskManagementSystem.Api.Exceptions.DuplicateResourceException ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.Conflict; // 409
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { Message = ex.Message }));
+        }
+        catch (TaskManagementSystem.Api.Exceptions.ReferenceNotFoundException ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest; // 400
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { Message = ex.Message }));
+        }
         catch (Exception ex)
         {
             // Log exact error and full stack trace deeply specifically per request
