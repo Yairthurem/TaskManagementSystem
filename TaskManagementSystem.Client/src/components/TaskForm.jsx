@@ -67,7 +67,7 @@ export default function TaskForm() {
       }
       navigate('/')
     } catch (err) {
-      alert(`Failed to ${isEditMode ? 'update' : 'create'} task! ` + JSON.stringify(err.data))
+      // Error handled by global rtkQueryErrorLogger middleware
     }
   }
 

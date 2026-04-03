@@ -72,6 +72,7 @@ export default function TaskList() {
             </div>
             
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              {task.reminderSent && <span className="badge reminded">🔔 Reminded</span>}
               {getPriorityBadge(task.priority)}
               <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
                 <button 
