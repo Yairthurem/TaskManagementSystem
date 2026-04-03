@@ -36,10 +36,18 @@ export default function TaskForm() {
     if (isEditMode && allTasks && tags) {
       const taskToEdit = allTasks.find(t => t.id === parseInt(id))
       if (taskToEdit) {
+        // Convert UTC string to Date object and then to local YYYY-MM-DDTHH:mm
+        let localDateString = ''
+        if (taskToEdit.dueDate) {
+          const date = new Date(taskToEdit.dueDate)
+          const localTime = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+          localDateString = localTime.toISOString().slice(0, 16)
+        }
+
         reset({
           title: taskToEdit.title,
           description: taskToEdit.description || '',
-          dueDate: taskToEdit.dueDate ? new Date(taskToEdit.dueDate).toISOString().slice(0, 16) : '',
+          dueDate: localDateString,
           priority: taskToEdit.priority,
           userId: taskToEdit.userId.toString(),
           tagIds: taskToEdit.tags ? tags?.filter(t => taskToEdit.tags.includes(t.name)).map(t => t.id.toString()) : []
@@ -47,6 +55,8 @@ export default function TaskForm() {
         setIsDataLoaded(true)
       }
     } else if (!isEditMode) {
+        // Reset to initial defaults when navigating to 'New Task' while already mounted
+        reset({ title: '', description: '', dueDate: '', priority: 'Low', userId: '', tagIds: [] })
         setIsDataLoaded(true)
     }
   }, [isEditMode, allTasks, tags, id, reset])
@@ -79,7 +89,7 @@ export default function TaskForm() {
   return (
     <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
       <h2 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>
-        {isEditMode ? 'Edit Task' : 'Create New Task'}
+        {isEditMode ? 'Editing Task' : 'Create New Task'}
       </h2>
       
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -126,7 +136,7 @@ export default function TaskForm() {
         
         <div className="form-group">
           <label className="form-label">Tags</label>
-          <select className="form-control" multiple {...register('tagIds')} style={{ height: '90px' }}>
+          <select className="form-control" multiple {...register('tagIds')} style={{ height: '90px', fontSize: '0.8rem' }}>
             {tags && tags.map(t => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}

@@ -10,7 +10,7 @@ export default function Layout({ children }) {
           </Link>
           <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
             <Link to="/" style={{ color: 'var(--text-dark)', textDecoration: 'none', fontWeight: '500' }}>Dashboard</Link>
-            <Link to="/new-task" className="btn btn-primary" style={{ textDecoration: 'none' }}>+ New Task</Link>
+            <Link to="/new-task" className="btn btn-primary" style={{ textDecoration: 'none' }}>New Task</Link>
           </div>
         </div>
       </nav>

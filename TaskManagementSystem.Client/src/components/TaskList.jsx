@@ -56,45 +56,51 @@ export default function TaskList() {
       </div>
       
       <div className="card" style={{ padding: '0' }}>
-        {processedTasks.length > 0 ? processedTasks.map(task => (
-          <div key={task.id} className="task-item">
-            <div className="task-content">
-              <h3>{task.title}</h3>
-              <p>{task.description || "No description provided."}</p>
-              <div className="tags-row">
-                {task.tags && task.tags.map(tag => (
-                   <span key={tag} className="tag-badge">#{tag}</span>
-                ))}
+        <div className="task-scroll-container">
+          {processedTasks.length > 0 ? processedTasks.map(task => (
+            <div key={task.id} className="task-item">
+              <div className="task-content">
+                <h3>{task.title}</h3>
+                <p style={{ fontSize: '0.8rem' }}>{task.description || "No description provided."}</p>
+                <div className="tags-row">
+                  {task.tags && task.tags.map(tag => (
+                    <span key={tag} className="tag-badge">#{tag}</span>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem' }}>
+                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                    Due: {task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No Deadline'}
+                  </p>
+                  {task.reminderSent && <span className="badge reminded">🔔 REMINDED</span>}
+                </div>
               </div>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                Due: {task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No Deadline'}
-              </p>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              {task.reminderSent && <span className="badge reminded">🔔 Reminded</span>}
-              {getPriorityBadge(task.priority)}
-              <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => navigate('/edit-task/' + task.id)}
-                >
-                  Edit
-                </button>
-                <button 
-                  className="btn btn-danger"
-                  onClick={() => deleteTask(task.id)}
-                >
-                  Delete
-                </button>
+              
+              <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                {getPriorityBadge(task.priority)}
+                <div style={{ display: 'flex', gap: '0.35rem', marginLeft: '0.5rem' }}>
+                  <button 
+                    className="icon-btn"
+                    title="Edit Task"
+                    onClick={() => navigate('/edit-task/' + task.id)}
+                  >
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  </button>
+                  <button 
+                    className="icon-btn delete"
+                    title="Delete Task"
+                    onClick={() => window.confirm("Are you sure you want to delete this task?") && deleteTask(task.id)}
+                  >
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )) : (
-          <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            No tasks found. Try clearing filters or create a new one!
-          </div>
-        )}
+          )) : (
+            <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+              No tasks found. Try clearing filters or create a new one!
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

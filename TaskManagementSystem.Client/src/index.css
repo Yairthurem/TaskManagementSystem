@@ -55,7 +55,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.85rem;
   border-bottom: 1px solid var(--border-color);
   transition: all 0.2s ease;
 }
@@ -87,9 +87,9 @@ body {
 .tag-badge {
   background: #E5E7EB;
   color: #374151;
-  padding: 0.2rem 0.5rem;
+  padding: 0.15rem 0.4rem;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
 }
 
 .badge {
@@ -102,7 +102,79 @@ body {
 .badge.high { background: #FEE2E2; color: #991B1B; }
 .badge.medium { background: #FEF3C7; color: #92400E; }
 .badge.low { background: #D1FAE5; color: #065F46; }
-.badge.reminded { background: #FFEDD5; color: #9A3412; border: 1px solid #FED7AA; }
+.badge.reminded { background: #FFEDD5; color: #9A3412; border: 1px solid #FED7AA; font-size: 0.6rem; padding: 0.1rem 0.4rem; }
+
+.task-scroll-container {
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+/* Custom Scrollbar for Tasks */
+.task-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+.task-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.task-scroll-container::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 10px;
+}
+.task-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Mobile Responsiveness & Layout Stability */
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
+  }
+  .task-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .task-item > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .header select {
+    width: 100% !important;
+  }
+}
+
+.icon-btn {
+  background: none;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 0.35rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+  transition: all 0.2s;
+}
+.icon-btn:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+  color: var(--text-dark);
+}
+.icon-btn.delete:hover {
+  color: var(--danger);
+  border-color: #FECACA;
+  background: #FEF2F2;
+}
+.icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
 
 .btn {
   padding: 0.5rem 1rem;
