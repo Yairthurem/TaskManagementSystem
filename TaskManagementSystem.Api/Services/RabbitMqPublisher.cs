@@ -23,7 +23,9 @@ public class RabbitMqPublisher : IMessagePublisher
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();
 
-        await channel.QueueDeclareAsync(queue: "task-reminders",
+        string queueName = _configuration["RabbitMqSettings:QueueName"] ?? "task-reminders";
+
+        await channel.QueueDeclareAsync(queue: queueName,
                              durable: false,
                              exclusive: false,
                              autoDelete: false,
@@ -33,7 +35,7 @@ public class RabbitMqPublisher : IMessagePublisher
         var body = Encoding.UTF8.GetBytes(json);
 
         await channel.BasicPublishAsync(exchange: string.Empty,
-                             routingKey: "task-reminders",
+                             routingKey: queueName,
                              body: body);
     }
 }

@@ -8,11 +8,13 @@ namespace TaskManagementSystem.Api.BackgroundServices;
 public class TaskReminderWorker : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<TaskReminderWorker> _logger;
 
-    public TaskReminderWorker(IServiceProvider serviceProvider, ILogger<TaskReminderWorker> logger)
+    public TaskReminderWorker(IServiceProvider serviceProvider, IConfiguration configuration, ILogger<TaskReminderWorker> logger)
     {
         _serviceProvider = serviceProvider;
+        _configuration = configuration;
         _logger = logger;
     }
 
@@ -55,7 +57,8 @@ public class TaskReminderWorker : BackgroundService
                 }
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            int pollingInterval = _configuration.GetValue<int>("RabbitMqSettings:PollingIntervalSeconds", 60);
+            await Task.Delay(TimeSpan.FromSeconds(pollingInterval), stoppingToken);
         }
     }
 }

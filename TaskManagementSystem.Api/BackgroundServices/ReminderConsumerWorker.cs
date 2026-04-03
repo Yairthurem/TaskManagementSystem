@@ -34,7 +34,9 @@ public class ReminderConsumerWorker : BackgroundService
             _connection = await factory.CreateConnectionAsync(cancellationToken);
             _channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
-            await _channel.QueueDeclareAsync(queue: "task-reminders",
+            string queueName = _configuration["RabbitMqSettings:QueueName"] ?? "task-reminders";
+
+            await _channel.QueueDeclareAsync(queue: queueName,
                                  durable: false,
                                  exclusive: false,
                                  autoDelete: false,
@@ -77,7 +79,9 @@ public class ReminderConsumerWorker : BackgroundService
             }
         };
 
-        await _channel.BasicConsumeAsync(queue: "task-reminders",
+        string queueName = _configuration["RabbitMqSettings:QueueName"] ?? "task-reminders";
+
+        await _channel.BasicConsumeAsync(queue: queueName,
                              autoAck: true,
                              consumer: consumer, cancellationToken: stoppingToken);
                              
