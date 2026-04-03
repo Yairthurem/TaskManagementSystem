@@ -20,6 +20,12 @@ public class GlobalExceptionMiddleware
         {
             await _next(context);
         }
+        catch (KeyNotFoundException ex)
+        {
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await context.Response.WriteAsync(JsonSerializer.Serialize(new { Message = ex.Message }));
+        }
         catch (Exception ex)
         {
             // Log exact error and full stack trace deeply specifically per request

@@ -40,4 +40,27 @@ public class UserService : IUserService
             createdUser.Phone
         );
     }
+
+    public async Task<UserDto> UpdateUserAsync(int id, UserUpdateDto dto)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null) throw new KeyNotFoundException($"User with ID {id} not found.");
+
+        user.FirstName = dto.FirstName;
+        user.LastName = dto.LastName;
+        user.Email = dto.Email;
+        user.Phone = dto.Phone;
+
+        await _userRepository.UpdateAsync(user);
+
+        return new UserDto(user.Id, user.FirstName, user.LastName, user.Email, user.Phone);
+    }
+
+    public async Task DeleteUserAsync(int id)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null) throw new KeyNotFoundException($"User with ID {id} not found.");
+
+        await _userRepository.DeleteAsync(user);
+    }
 }

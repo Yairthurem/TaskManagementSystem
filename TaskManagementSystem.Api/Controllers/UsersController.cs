@@ -29,4 +29,18 @@ public class UsersController : ControllerBase
         var createdUser = await _userService.CreateUserAsync(request);
         return CreatedAtAction(nameof(GetUsers), new { id = createdUser.Id }, createdUser);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto request)
+    {
+        var updatedUser = await _userService.UpdateUserAsync(id, request);
+        return Ok(updatedUser);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        await _userService.DeleteUserAsync(id);
+        return NoContent();
+    }
 }
