@@ -26,7 +26,7 @@ public class TagServiceTests
         var dto = new TagCreateDto("Urgent");
         var insertedTag = new Tag { Id = 1, Name = "Urgent" };
         
-        _mockRepository.Setup(r => r.AddAsync(It.IsAny<Tag>())).ReturnsAsync(insertedTag);
+        _mockRepository.Setup(r => r.AddTagAsync(It.IsAny<Tag>())).ReturnsAsync(insertedTag);
 
         // Act
         var result = await _tagService.CreateTagAsync(dto);
@@ -37,7 +37,7 @@ public class TagServiceTests
         result.Name.Should().Be("Urgent");
         
         // Confirm repository method was called exactly once with the correctly mapped DTO data
-        _mockRepository.Verify(r => r.AddAsync(It.Is<Tag>(t => t.Name == "Urgent")), Times.Once);
+        _mockRepository.Verify(r => r.AddTagAsync(It.Is<Tag>(t => t.Name == "Urgent")), Times.Once);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class TagServiceTests
             new Tag { Id = 2, Name = "Feature" }
         };
         
-        _mockRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(tagsList);
+        _mockRepository.Setup(r => r.GetTagsAsync()).ReturnsAsync(tagsList);
 
         // Act
         var result = await _tagService.GetTagsAsync();
@@ -58,6 +58,6 @@ public class TagServiceTests
         // Assert
         result.Should().HaveCount(2);
         result.First().Name.Should().Be("Bug");
-        _mockRepository.Verify(r => r.GetAllAsync(), Times.Once);
+        _mockRepository.Verify(r => r.GetTagsAsync(), Times.Once);
     }
 }

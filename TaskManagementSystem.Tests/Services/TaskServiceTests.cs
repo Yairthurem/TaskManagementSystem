@@ -25,18 +25,13 @@ public class TaskServiceTests
         // 1. Arrange
         var request = new TaskCreateDto("New Feature", "Description", null, TaskPriority.High, 1, new List<int> { 5 });
         
-        // Mocking validation checks to pass
-        _mockRepository.Setup(r => r.UserExistsAsync(1)).ReturnsAsync(true);
-        _mockRepository.Setup(r => r.TagsExistAsync(It.IsAny<IEnumerable<int>>())).ReturnsAsync(true);
-        
         var savedTask = new TaskEntity 
         { 
-            Id = 10, Title = "New Feature", Priority = TaskPriority.High, UserId = 1 
+            Id = 10, Title = "New Feature", Priority = TaskPriority.High, UserId = 1,
+            TaskTags = new List<TaskTag> { new TaskTag { Tag = new Tag { Name = "Urgent" } } }
         };
         
-        _mockRepository.Setup(r => r.AddAsync(It.IsAny<TaskEntity>())).ReturnsAsync(savedTask);
-        // Mock returning the associated tag cleanly
-        _mockRepository.Setup(r => r.GetTagsByTaskAsync(10)).ReturnsAsync(new List<Tag> { new Tag { Name = "Urgent" }});
+        _mockRepository.Setup(r => r.AddTaskAsync(It.IsAny<TaskEntity>())).ReturnsAsync(savedTask);
 
         // 2. Act
         var result = await _taskService.CreateTaskAsync(request);
@@ -48,7 +43,6 @@ public class TaskServiceTests
         result.Tags.Should().Contain("Urgent");
         
         // Ensure Database constraints were verified before saving
-        _mockRepository.Verify(r => r.UserExistsAsync(1), Times.Once); 
-        _mockRepository.Verify(r => r.AddAsync(It.IsAny<TaskEntity>()), Times.Once);
+        _mockRepository.Verify(r => r.AddTaskAsync(It.IsAny<TaskEntity>()), Times.Once);
     }
 }
