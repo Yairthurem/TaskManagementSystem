@@ -20,6 +20,14 @@ public class UserService : IUserService
         return users.Select(u => new UserDto(u.Id, u.FirstName, u.LastName, u.Email, u.Phone));
     }
 
+    public async Task<UserDto> GetUserByIdAsync(int id)
+    {
+        var user = await _userRepository.GetByIdAsync(id);
+        if (user == null) throw new KeyNotFoundException($"User with ID {id} not found.");
+        
+        return new UserDto(user.Id, user.FirstName, user.LastName, user.Email, user.Phone);
+    }
+
     public async Task<UserDto> CreateUserAsync(UserCreateDto dto)
     {
         var user = new User
