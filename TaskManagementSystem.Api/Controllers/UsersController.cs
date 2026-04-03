@@ -1,78 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using TaskManagementSystem.Api.Data;
-using TaskManagementSystem.Api.Models;
 using TaskManagementSystem.Api.DTOs;
-using Microsoft.EntityFrameworkCore;
+using TaskManagementSystem.Api.Interfaces;
 
 namespace TaskManagementSystem.Api.Controllers;
 
 [ApiController]
-[Route("api/users")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IUserService _userService;
 
-    public UsersController(AppDbContext context)
+    // Notice we now strictly inject the abstracted Service identical to Tasks and Tags!
+    public UsersController(IUserService userService)
     {
-        _context = context;
+        _userService = userService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
-        var users = await _context.Users.ToListAsync();
-        var dtos = users.Select(u => new UserDto(u.Id, u.FirstName, u.LastName, u.Email, u.Phone));
-        return Ok(dtos);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser(int id)
-    {
-        var user = await _context.Users.FindAsync(id);
-        if (user == null) return NotFound();
-        return Ok(new UserDto(user.Id, user.FirstName, user.LastName, user.Email, user.Phone));
+        var users = await _userService.GetUsersAsync();
+        return Ok(users);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userDto)
+    public async Task<IActionResult> CreateUser([FromBody] UserCreateDto request)
     {
-        var user = new User
-        {
-            FirstName = userDto.FirstName,
-            LastName = userDto.LastName,
-            Email = userDto.Email,
-            Phone = userDto.Phone
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, 
-            new UserDto(user.Id, user.FirstName, user.LastName, user.Email, user.Phone));
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto userDto)
-    {
-        var user = await _context.Users.FindAsync(id);
-        if (user == null) return NotFound();
-
-        user.FirstName = userDto.FirstName;
-        user.LastName = userDto.LastName;
-        user.Email = userDto.Email;
-        user.Phone = userDto.Phone;
-
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
-    {
-        var user = await _context.Users.FindAsync(id);
-        if (user == null) return NotFound();
-
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        var createdUser = await _userService.CreateUserAsync(request);
+        return CreatedAtAction(nameof(GetUsers), new { id = createdUser.Id }, createdUser);
     }
 }

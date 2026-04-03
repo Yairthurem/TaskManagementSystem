@@ -43,6 +43,8 @@ builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Messaging and Background Services
 builder.Services.AddScoped<IMessagePublisher, RabbitMqPublisher>();
@@ -50,6 +52,8 @@ builder.Services.AddHostedService<TaskManagementSystem.Api.BackgroundServices.Ta
 builder.Services.AddHostedService<TaskManagementSystem.Api.BackgroundServices.ReminderConsumerWorker>();
 
 var app = builder.Build();
+
+app.UseMiddleware<TaskManagementSystem.Api.Middlewares.GlobalExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
