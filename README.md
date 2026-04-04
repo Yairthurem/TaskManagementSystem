@@ -65,4 +65,4 @@ JOIN TaskTags tt ON t.Id = tt.TaskId
 JOIN Tags tg ON tg.Id = tt.TagId 
 GROUP BY t.Id, t.Title 
 HAVING COUNT(tt.TagId) >= 2 
-ORDER BY TagCount DESC;x
+ORDER BY TagCount DESC
