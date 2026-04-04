@@ -3,7 +3,7 @@
 A professional-grade full-stack task management system 
 
 ### Technical spec 
-A full elaborated technical spec is attached to the repository as well 'Tech design - SuperCom.pdf'
+A full elaborated technical spec is attached to the repository see 'Tech design - SuperCom.pdf'
 It includes:
 1. Architectural strategy decisions and trade-offs
 2. Detailed API endpoints 
@@ -11,30 +11,31 @@ It includes:
 4. The requested SQL query
 5. Optional future extensions 
 
-### 🐳 Deployment (Recommended)
-The easiest way to review this project is using Docker. This will automatically set up the database, RabbitMQ, and launch all services.
+## 🛠️ Tech Stack
+- **Backend**: .NET 8 Web API, Entity Framework Core (SQL Server), RabbitMQ, Masstransit.
+- **Frontend**: React 18, Redux Toolkit (RTK Query), Vite, Vanilla CSS.
+- **Infrastructure**: Docker & Docker Compose.
 
+### 🐳 Deployment
+The easiest way to review this project is using Docker. This will automatically set up the database, RabbitMQ, and launch all services.
+### Prerequisites
+Docker installed and running
 ### Instructions
-1. Open a terminal in this root directory.
+1. Open a terminal in root directory.
 2. Run the following command:
    ```bash
    docker compose down -v
    docker compose up --build -d
    ```
 3. Access the application at:
-   - **Frontend UI**: [http://localhost:8080](http://localhost:8080) 🟢
    - **API Swagger**: [http://localhost:5001/swagger](http://localhost:5001/swagger) 🟢
+   - **Frontend UI**: [http://localhost:8080](http://localhost:8080) 🟢
    - **RabbitMQ Dashboard**: [http://localhost:15673](http://localhost:15673) (guest/guest) 🟢
 
-### 1. Automated Tests (Full Proof)
+### Automated Tests 
 To verify the core business logic and service mapping in isolation:
 ```bash
 dotnet test
-
-## 🛠️ Tech Stack
-- **Backend**: .NET 8 Web API, Entity Framework Core (SQL Server), RabbitMQ, Masstransit.
-- **Frontend**: React 18, Redux Toolkit (RTK Query), Vite, Vanilla CSS.
-- **Infrastructure**: Docker & Docker Compose.
 
 ## ✨ Main Features
 - **Real-Time Dashboards**: Automatic 30-second polling keeps task statuses (like "Reminded" badges) synced with background processes.
