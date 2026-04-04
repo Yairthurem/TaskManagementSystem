@@ -20,9 +20,17 @@ public class AppDbContext : DbContext
             return await base.SaveChangesAsync(cancellationToken);
         }
         catch (DbUpdateException ex) when (ex.InnerException is Microsoft.Data.SqlClient.SqlException sqlEx)
-        {//Handking specific SQL exceptions for better error messages and avoiding duplicate jurneys to DB
+        {
+            // Handling specific SQL exceptions for better error messages
             if (sqlEx.Number == 2601 || sqlEx.Number == 2627)
-                throw new TaskManagementSystem.Api.Exceptions.DuplicateResourceException("This email already exists");
+            {
+                if (sqlEx.Message.Contains("IX_Users_Email"))
+                    throw new TaskManagementSystem.Api.Exceptions.DuplicateResourceException("This email already exists.");
+                if (sqlEx.Message.Contains("IX_Tags_Name"))
+                    throw new TaskManagementSystem.Api.Exceptions.DuplicateResourceException("This tag name already exists.");
+                
+                throw new TaskManagementSystem.Api.Exceptions.DuplicateResourceException("A record with this unique value already exists.");
+            }
             
             if (sqlEx.Number == 547)
                 throw new TaskManagementSystem.Api.Exceptions.ReferenceNotFoundException("A related record was not found. Please ensure the User ID or Tag IDs exist.");

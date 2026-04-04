@@ -28,6 +28,7 @@ public class TaskRepository : ITaskRepository
         return await _context.Tasks
                              .Include(t => t.TaskTags)
                                 .ThenInclude(tt => tt.Tag)
+                             .Include(t => t.RemindersLogs)
                              .FirstOrDefaultAsync(t => t.Id == id);
     }
 

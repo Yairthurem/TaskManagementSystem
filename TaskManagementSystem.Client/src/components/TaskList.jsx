@@ -5,7 +5,9 @@ import { useGetTasksQuery, useDeleteTaskMutation, useGetUsersQuery } from '../st
 export default function TaskList() {
   const navigate = useNavigate()
   const [selectedUserId, setSelectedUserId] = useState('')
-  const { data: tasks, isLoading, isError } = useGetTasksQuery()
+  const { data: tasks, isLoading, isError } = useGetTasksQuery(undefined, { 
+    pollingInterval: 30000 // Refresh every 30s to catch background updates
+  })
   const { data: users } = useGetUsersQuery()
   const [deleteTask] = useDeleteTaskMutation()
 
@@ -20,6 +22,9 @@ export default function TaskList() {
     }
   }
 
+  // Priority weights for sorting
+  const priorityMap = { 'High': 2, 'Medium': 1, 'Low': 0 }
+
   // Clone, filter, and sort tasks
   let processedTasks = tasks ? [...tasks] : []
   
@@ -28,11 +33,16 @@ export default function TaskList() {
     processedTasks = processedTasks.filter(task => task.userId === parseInt(selectedUserId))
   }
 
-  // Sort by DueDate descending
+  // Sort by Priority DESC, then DueDate DESC
   processedTasks.sort((a, b) => {
-    if (!a.dueDate) return 1;
-    if (!b.dueDate) return -1;
-    return new Date(b.dueDate) - new Date(a.dueDate);
+    const pA = priorityMap[a.priority] ?? 0
+    const pB = priorityMap[b.priority] ?? 0
+    if (pB !== pA) return pB - pA // High priority first
+    
+    // Sort by DueDate descending if priorities match
+    const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0
+    const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0
+    return dateB - dateA;
   })
 
   return (

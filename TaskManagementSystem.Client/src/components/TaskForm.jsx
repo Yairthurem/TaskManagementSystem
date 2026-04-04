@@ -8,7 +8,15 @@ import { useCreateTaskMutation, useUpdateTaskMutation, useGetTasksQuery, useGetU
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required").max(100),
   description: z.string().max(500).optional(),
-  dueDate: z.string().optional().or(z.literal('')),
+  dueDate: z.string().optional().or(z.literal('')).refine((val) => {
+    if (!val) return true;
+    const date = new Date(val);
+    const now = new Date();
+    // Allow if same minute or future (buffer of 60s for slow typing)
+    return date.getTime() >= now.getTime() - 60000;
+  }, {
+    message: "Due date cannot be in the past"
+  }),
   priority: z.enum(['Low', 'Medium', 'High']),
   userId: z.string().min(1, "Please assign a user"),
   tagIds: z.array(z.string()).optional()
