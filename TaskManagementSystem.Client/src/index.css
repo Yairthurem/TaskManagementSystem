@@ -28,11 +28,11 @@ body {
 .container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 2rem; /* Restored: Vertical padding was 0 in the original inline style */
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem; /* Reduced for a more compact look */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -208,6 +208,8 @@ body {
   cursor: pointer;
   border: none;
   font-size: 0.875rem;
+  text-decoration: none; /* Added to remove the underline */
+  display: inline-block;
   transition: background-color 0.2s ease;
 }
 .btn-primary {
@@ -279,7 +281,7 @@ body {
   background: white;
   padding: 1rem 0;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem; /* Reduced from 2rem */
 }
 
 .nav-container {
