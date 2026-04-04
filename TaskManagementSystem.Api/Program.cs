@@ -79,7 +79,7 @@ using (var scope = app.Services.CreateScope())
     {
         db.Users.AddRange(
             new User { FirstName = "Alice", LastName = "Smith", Email = "alice@example.com" },
-            new User { Id = 2, FirstName = "Bob", LastName = "Jones", Email = "bob@example.com" }
+            new User { FirstName = "Bob", LastName = "Jones", Email = "bob@example.com" }
         );
     }
     if (!db.Tags.Any())
