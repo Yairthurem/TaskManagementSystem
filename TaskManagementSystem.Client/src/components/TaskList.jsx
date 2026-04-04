@@ -39,10 +39,11 @@ export default function TaskList() {
     const pB = priorityMap[b.priority] ?? 0
     if (pB !== pA) return pB - pA // High priority first
     
-    // Sort by DueDate descending if priorities match
-    const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0
-    const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0
-    return dateB - dateA;
+    // Sort by DueDate ascending (nearest first) if priorities match
+    // Tasks with no deadline are pushed to the very bottom
+    const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+    const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+    return dateA - dateB;
   })
 
   return (

@@ -94,6 +94,18 @@ export default function TaskForm() {
 
   const isSaving = isCreating || isUpdating
 
+  // Generate local date string for 'min' attribute so past days are greyed out
+  const getMinDate = () => {
+    if (isEditMode) return undefined;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}T00:00`;
+  };
+
+  const minDate = getMinDate();
+
   return (
     <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
       <h2 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>
@@ -116,7 +128,12 @@ export default function TaskForm() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
             <div>
               <label className="form-label">Due Date (Optional)</label>
-              <input type="datetime-local" className="form-control" {...register('dueDate')} />
+              <input 
+                type="datetime-local" 
+                className="form-control" 
+                {...register('dueDate')} 
+                min={minDate}
+              />
               {errors.dueDate && <span className="text-danger">{errors.dueDate.message}</span>}
             </div>
 
