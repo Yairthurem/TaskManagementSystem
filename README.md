@@ -30,28 +30,21 @@ The easiest way to review this project is using Docker. This will automatically 
 To verify the core business logic and service mapping in isolation:
 ```bash
 dotnet test
-```
-
-### 2. Manual Integration (Swagger)
-You can verify the **full data flow** (API -> SQL Server -> RabbitMQ Background Reminders) by using the Swagger UI at [http://localhost:5001/swagger](http://localhost:5001/swagger).
-
----
-
-## ✨ Features
-- **Real-Time Dashboards**: Automatic 30-second polling keeps task statuses (like "Reminded" badges) synced with background processes.
-- **Background Workers**: Reminders are triggered by a `.NET HostedService` and processed via **RabbitMQ** for high reliability.
-- **Smart Sorting**: Tasks are prioritised by level (High > Medium > Low) and then by the nearest due date.
-- **Robust Validation**: Combined client-side (Zod) and server-side (FluentValidation) ensures data integrity.
-- **Professional Seeding**: Pre-loaded with full user details (Alice Smith, Bob Jones) and tags.
 
 ## 🛠️ Tech Stack
 - **Backend**: .NET 8 Web API, Entity Framework Core (SQL Server), RabbitMQ, Masstransit.
 - **Frontend**: React 18, Redux Toolkit (RTK Query), Vite, Vanilla CSS.
 - **Infrastructure**: Docker & Docker Compose.
 
+## ✨ Main Features
+- **Real-Time Dashboards**: Automatic 30-second polling keeps task statuses (like "Reminded" badges) synced with background processes.
+- **Background Workers**: Reminders are triggered by a `.NET HostedService` and processed via **RabbitMQ** for high reliability.
+- **Smart Sorting**: Tasks are prioritised by level (High > Medium > Low) and then by the nearest due date.
+- **Robust Validation**: Combined client-side (Zod) and server-side (FluentValidation) ensures data integrity.
+- **Professional Seeding**: Pre-loaded with full user details (Alice Smith, Bob Jones) and tags.
+
 ## 👨‍💻 Local Development (Alternative)
 
-If you prefer to run the components manually:
 ### 1. Database
 Update `appsettings.json` connection string and run:
 `dotnet ef database update`
@@ -62,3 +55,12 @@ Update `appsettings.json` connection string and run:
 `cd TaskManagementSystem.Client`
 `npm install`
 `npm run dev`
+
+## ✨ SQL query (also resides in the tech spec)
+SELECT t.Id, t.Title, COUNT(tt.TagId) AS TagCount, STRING_AGG(tg.Name, ', ') AS TagNames 
+FROM Tasks t 
+JOIN TaskTags tt ON t.Id = tt.TaskId 
+JOIN Tags tg ON tg.Id = tt.TagId 
+GROUP BY t.Id, t.Title 
+HAVING COUNT(tt.TagId) >= 2 
+ORDER BY TagCount DESC;x
