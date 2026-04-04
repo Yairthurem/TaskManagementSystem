@@ -24,7 +24,7 @@ The easiest way to review this project is using Docker. This will automatically 
    ```
 3. Wait **30-60 seconds** for SQL Server to initialize and migrations to apply.
 4. Access the application at: **[http://localhost:8080](http://localhost:8080)**
-   - *Note: API Swagger is available at http://localhost:5050/swagger*
+   - *Note: API Swagger is available at http://localhost:5001/swagger*
 
 ## ✨ Features
 

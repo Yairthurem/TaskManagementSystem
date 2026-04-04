@@ -78,8 +78,18 @@ using (var scope = app.Services.CreateScope())
     if (!db.Users.Any())
     {
         db.Users.AddRange(
-            new User { FirstName = "Alice", LastName = "Smith", Email = "alice@example.com" },
-            new User { FirstName = "Bob", LastName = "Jones", Email = "bob@example.com" }
+            new User { 
+                FirstName = "Alice", 
+                LastName = "Smith", 
+                Email = "alice.smith@taskhub.com", 
+                Phone = "+1-555-0101" 
+            },
+            new User { 
+                FirstName = "Bob", 
+                LastName = "Jones", 
+                Email = "bob.jones@taskhub.com", 
+                Phone = "+1-555-0102" 
+            }
         );
     }
     if (!db.Tags.Any())
@@ -88,7 +98,8 @@ using (var scope = app.Services.CreateScope())
             new Tag { Name = "Critical" },
             new Tag { Name = "Bug" },
             new Tag { Name = "Feature" },
-            new Tag { Name = "Done" }
+            new Tag { Name = "Improvement" },
+            new Tag { Name = "Documentation" }
         );
     }
     db.SaveChanges();

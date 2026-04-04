@@ -21,6 +21,7 @@ services:
       context: ./TaskManagementSystem.Api
       dockerfile: Dockerfile
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=db;Database=TaskManagementSystemDb;User Id=sa;Password=Task#123#Pass;TrustServerCertificate=True
       - ConnectionStrings__RabbitMqConnection=amqp://rabbitmq:5672
     ports:
