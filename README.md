@@ -1,41 +1,50 @@
 # TaskHub Flow - Task Management System
 
-A professional-grade full-stack task management 
+A professional-grade full-stack task management system 
 
-### Technical spec 'Tech design - SuperCom.pdf'
-A full elaborated technical spec is attached to the repository as well. It includes :
+### Technical spec 
+A full elaborated technical spec is attached to the repository as well 'Tech design - SuperCom.pdf'
+It includes:
 1. Architectural strategy decisions and trade-offs
-2. detailed API endpoints 
+2. Detailed API endpoints 
 3. Data models
 4. The requested SQL query
 5. Optional future extensions 
 
-### Deployment 
-The easiest way to review this project is using Docker. This will automatically set up the database and launch all services.
-
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
+### 🐳 Deployment (Recommended)
+The easiest way to review this project is using Docker. This will automatically set up the database, RabbitMQ, and launch all services.
 
 ### Instructions
 1. Open a terminal in this root directory.
 2. Run the following command:
    ```bash
+   docker compose down -v
    docker compose up --build -d
    ```
-3. Wait **30-60 seconds** for SQL Server to initialize and migrations to apply.
-4. Access the application at: **[http://localhost:8080](http://localhost:8080)**
-   - *Note: API Swagger is available at http://localhost:5001/swagger*
+3. Access the application at:
+   - **Frontend UI**: [http://localhost:8080](http://localhost:8080) 🟢
+   - **API Swagger**: [http://localhost:5001/swagger](http://localhost:5001/swagger) 🟢
+   - **RabbitMQ Dashboard**: [http://localhost:15673](http://localhost:15673) (guest/guest) 🟢
+
+### 1. Automated Tests (Full Proof)
+To verify the core business logic and service mapping in isolation:
+```bash
+dotnet test
+```
+
+### 2. Manual Integration (Swagger)
+You can verify the **full data flow** (API -> SQL Server -> RabbitMQ Background Reminders) by using the Swagger UI at [http://localhost:5001/swagger](http://localhost:5001/swagger).
+
+---
 
 ## ✨ Features
-
 - **Real-Time Dashboards**: Automatic 30-second polling keeps task statuses (like "Reminded" badges) synced with background processes.
-- **Background Workers**: Includes a `.NET HostedService` that monitors due dates and publishes reminder events to RabbitMQ.
+- **Background Workers**: Reminders are triggered by a `.NET HostedService` and processed via **RabbitMQ** for high reliability.
 - **Smart Sorting**: Tasks are prioritised by level (High > Medium > Low) and then by the nearest due date.
 - **Robust Validation**: Combined client-side (Zod) and server-side (FluentValidation) ensures data integrity.
-- **Seeded Data**: Alice Smith and Bob Jones and some tags are pre-populated so you can test assignment and filtering immediately.
+- **Professional Seeding**: Pre-loaded with full user details (Alice Smith, Bob Jones) and tags.
 
 ## 🛠️ Tech Stack
-
 - **Backend**: .NET 8 Web API, Entity Framework Core (SQL Server), RabbitMQ, Masstransit.
 - **Frontend**: React 18, Redux Toolkit (RTK Query), Vite, Vanilla CSS.
 - **Infrastructure**: Docker & Docker Compose.
