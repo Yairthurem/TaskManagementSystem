@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Api.Data;
 using TaskManagementSystem.Api.Interfaces;
+using TaskManagementSystem.Api.Models;
 using TaskManagementSystem.Api.Repositories;
 using TaskManagementSystem.Api.Services;
 using TaskManagementSystem.Api.Validators;
@@ -69,8 +70,28 @@ app.MapControllers();
 // Automate migrations on startup (Simplified for Docker Deployment)
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+
+    // Runtime Seed if empty
+    if (!db.Users.Any())
+    {
+        db.Users.AddRange(
+            new User { FirstName = "Alice", LastName = "Smith", Email = "alice@example.com" },
+            new User { Id = 2, FirstName = "Bob", LastName = "Jones", Email = "bob@example.com" }
+        );
+    }
+    if (!db.Tags.Any())
+    {
+        db.Tags.AddRange(
+            new Tag { Name = "Critical" },
+            new Tag { Name = "Bug" },
+            new Tag { Name = "Feature" },
+            new Tag { Name = "Done" }
+        );
+    }
+    db.SaveChanges();
 }
 
 app.Run();

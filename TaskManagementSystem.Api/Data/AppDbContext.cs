@@ -50,7 +50,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TaskEntity>()
             .HasOne(t => t.User)
             .WithMany()
-            .HasForeignKey(t => t.UserId);
+            .HasForeignKey(t => t.UserId)
+            .OnDelete(DeleteBehavior.Cascade); // If a User is deleted, their tasks follow
 
         // Unique indexes
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
@@ -66,28 +67,16 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TaskTag>()
             .HasOne(tt => tt.Task)
             .WithMany(t => t.TaskTags)
-            .HasForeignKey(tt => tt.TaskId);
+            .HasForeignKey(tt => tt.TaskId)
+            .OnDelete(DeleteBehavior.Cascade); // If a Task is deleted, the join record is removed
 
         modelBuilder.Entity<TaskTag>()
             .HasOne(tt => tt.Tag)
             .WithMany()
-            .HasForeignKey(tt => tt.TagId);
+            .HasForeignKey(tt => tt.TagId)
+            .OnDelete(DeleteBehavior.Cascade); // If a Tag is deleted, it's removed from all tasks
             
         // Table Name mapping specifically because entity is TaskEntity
         modelBuilder.Entity<TaskEntity>().ToTable("Tasks");
-
-        // Seed Users
-        modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Alice", LastName = "Smith", Email = "alice@example.com", PasswordHash = "AQAAAAEAACcQAAAAENPj" },
-            new User { Id = 2, FirstName = "Bob", LastName = "Jones", Email = "bob@example.com", PasswordHash = "AQAAAAEAACcQAAAAENPj" }
-        );
-
-        // Seed Tags
-        modelBuilder.Entity<Tag>().HasData(
-            new Tag { Id = 1, Name = "Critical" },
-            new Tag { Id = 2, Name = "Bug" },
-            new Tag { Id = 3, Name = "Feature" },
-            new Tag { Id = 4, Name = "Done" }
-        );
     }
 }
