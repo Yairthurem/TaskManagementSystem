@@ -2,7 +2,7 @@
 
 A professional-grade full-stack task management 
 
-### Technical spec 'Tasks web application - Tech design - SuperCom'
+### Technical spec 'Tech design - SuperCom.pdf'
 A full elaborated technical spec is attached to the repository as well. It includes :
 1. Architectural strategy decisions and trade-offs
 2. detailed API endpoints 
