@@ -75,5 +75,19 @@ public class AppDbContext : DbContext
             
         // Table Name mapping specifically because entity is TaskEntity
         modelBuilder.Entity<TaskEntity>().ToTable("Tasks");
+
+        // Seed Users
+        modelBuilder.Entity<User>().HasData(
+            new User { Id = 1, FirstName = "Alice", LastName = "Smith", Email = "alice@example.com", PasswordHash = "AQAAAAEAACcQAAAAENPj" },
+            new User { Id = 2, FirstName = "Bob", LastName = "Jones", Email = "bob@example.com", PasswordHash = "AQAAAAEAACcQAAAAENPj" }
+        );
+
+        // Seed Tags
+        modelBuilder.Entity<Tag>().HasData(
+            new Tag { Id = 1, Name = "Critical" },
+            new Tag { Id = 2, Name = "Bug" },
+            new Tag { Id = 3, Name = "Feature" },
+            new Tag { Id = 4, Name = "Done" }
+        );
     }
 }

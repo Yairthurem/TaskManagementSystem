@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 export const apiSlice = createApi({
   reducerPath: 'api',
   // Localhost .NET Web Api default http port
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5050/api/' }), 
+  // Dynamic base URL for Docker deployment override
+  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5050/api/' }), 
   tagTypes: ['Task', 'User', 'Tag'],
   endpoints: (builder) => ({
     getUsers: builder.query({

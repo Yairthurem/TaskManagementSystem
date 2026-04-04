@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Task#123#Pass
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  api:
+    build:
+      context: ./TaskManagementSystem.Api
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=TaskManagementSystemDb;User Id=sa;Password=Task#123#Pass;TrustServerCertificate=True
+      - ConnectionStrings__RabbitMqConnection=amqp://rabbitmq:5672
+    ports:
+      - "5050:5050"
+    depends_on:
+      - db
+      - rabbitmq
+
+  frontend:
+    build:
+      context: ./TaskManagementSystem.Client
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://localhost:5050/api/
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+networks:
+  default:
+    name: task-hub-network
