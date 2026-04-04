@@ -78,6 +78,16 @@ export default function TaskList() {
                     <span key={tag} className="tag-badge">#{tag}</span>
                   ))}
                 </div>
+                {!selectedUserId && (
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                    Assigned to: <span style={{ fontWeight: 600 }}>
+                      {(() => {
+                        const user = users?.find(u => u.id === task.userId);
+                        return user ? `${user.firstName} ${user.lastName}` : 'System';
+                      })()}
+                    </span>
+                  </p>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem' }}>
                   <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>
                     Due: {task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No Deadline'}
