@@ -11,8 +11,8 @@ export default function TaskList() {
   const { data: users } = useGetUsersQuery()
   const [deleteTask] = useDeleteTaskMutation()
 
-  if (isLoading) return <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>Loading tasks...</div>
-  if (isError) return <div style={{ textAlign: 'center', padding: '3rem' }} className="text-danger">Failed to load tasks. Ensure backend is running.</div>
+  if (isLoading) return <div className="loading-container">Loading tasks...</div>
+  if (isError) return <div className="error-container text-danger">Failed to load tasks. Ensure backend is running.</div>
 
   const getPriorityBadge = (prio) => {
     switch (prio) {
@@ -50,11 +50,10 @@ export default function TaskList() {
     <div>
       <div className="header">
         <h1>Your Tracking Board</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-muted)' }}>Filter by Assignee:</label>
+        <div className="d-flex-gap">
+          <label className="filter-label">Filter by Assignee:</label>
           <select 
-            className="form-control" 
-            style={{ width: '220px', padding: '0.5rem', appearance: 'menulist' }}
+            className="filter-select" 
             value={selectedUserId}
             onChange={(e) => setSelectedUserId(e.target.value)}
           >
@@ -66,21 +65,16 @@ export default function TaskList() {
         </div>
       </div>
       
-      <div className="card" style={{ padding: '0' }}>
+      <div className="card p-0">
         <div className="task-scroll-container">
           {processedTasks.length > 0 ? processedTasks.map(task => (
             <div key={task.id} className="task-item">
               <div className="task-content">
                 <h3>{task.title}</h3>
-                <p style={{ fontSize: '0.8rem' }}>{task.description || "No description provided."}</p>
-                <div className="tags-row">
-                  {task.tags && task.tags.map(tag => (
-                    <span key={tag} className="tag-badge">#{tag}</span>
-                  ))}
-                </div>
+                <p className="task-description">{task.description || "No description provided."}</p>
                 {!selectedUserId && (
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                    Assigned to: <span style={{ fontWeight: 600 }}>
+                  <p className="task-assignee">
+                    Assigned to: <span>
                       {(() => {
                         const user = users?.find(u => u.id === task.userId);
                         return user ? `${user.firstName} ${user.lastName}` : 'System';
@@ -88,17 +82,22 @@ export default function TaskList() {
                     </span>
                   </p>
                 )}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem' }}>
-                  <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                <div className="tags-row">
+                  {task.tags && task.tags.map(tag => (
+                    <span key={tag} className="tag-badge">#{tag}</span>
+                  ))}
+                </div>
+                <div className="task-footer">
+                  <p className="task-due-date">
                     Due: {task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No Deadline'}
                   </p>
                   {task.reminderSent && <span className="badge reminded">🔔 REMINDED</span>}
                 </div>
               </div>
               
-              <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+              <div className="d-flex-gap">
                 {getPriorityBadge(task.priority)}
-                <div style={{ display: 'flex', gap: '0.35rem', marginLeft: '0.5rem' }}>
+                <div className="d-flex-gap-sm">
                   <button 
                     className="icon-btn"
                     title="Edit Task"
@@ -117,7 +116,7 @@ export default function TaskList() {
               </div>
             </div>
           )) : (
-            <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <div className="loading-container p-4">
               No tasks found. Try clearing filters or create a new one!
             </div>
           )}

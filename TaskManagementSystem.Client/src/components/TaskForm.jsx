@@ -90,7 +90,7 @@ export default function TaskForm() {
   }
 
   // Prevent rendering the form before we reset its default values during edit mode
-  if (!isDataLoaded) return <div style={{ textAlign: 'center', padding: '3rem' }}>Preparing form...</div>
+  if (!isDataLoaded) return <div className="loading-container">Preparing form...</div>
 
   const isSaving = isCreating || isUpdating
 
@@ -107,8 +107,8 @@ export default function TaskForm() {
   const minDate = getMinDate();
 
   return (
-    <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <h2 style={{ marginBottom: '1.5rem', fontWeight: 600 }}>
+    <div className="card form-card">
+      <h2 className="form-title">
         {isEditMode ? 'Editing Task' : 'Create New Task'}
       </h2>
       
@@ -125,7 +125,7 @@ export default function TaskForm() {
           {errors.description && <span className="text-danger">{errors.description.message}</span>}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div className="form-row">
             <div>
               <label className="form-label">Due Date (Optional)</label>
               <input 
@@ -156,20 +156,20 @@ export default function TaskForm() {
             ))}
           </select>
           {errors.userId && <span className="text-danger">{errors.userId.message}</span>}
-          {loadingUsers && <span className="text-muted" style={{ fontSize: '0.8rem' }}>Loading users from DB...</span>}
+          {loadingUsers && <span className="helper-text">Loading users from DB...</span>}
         </div>
         
         <div className="form-group">
           <label className="form-label">Tags</label>
-          <select className="form-control" multiple {...register('tagIds')} style={{ height: '90px', fontSize: '0.8rem' }}>
+          <select className="form-control tag-select-field" multiple {...register('tagIds')}>
             {tags && tags.map(t => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}
           </select>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>Hold Ctrl/Cmd to select multiple tags.</p>
+          <p className="helper-text">Hold Ctrl/Cmd to select multiple tags.</p>
         </div>
 
-        <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isSaving}>
+        <button type="submit" className="btn btn-primary w-full" disabled={isSaving}>
           {isSaving ? 'Synchronizing...' : (isEditMode ? 'Save Changes' : 'Create Task')}
         </button>
       </form>
