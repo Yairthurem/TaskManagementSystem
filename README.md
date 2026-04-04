@@ -36,6 +36,7 @@ Docker installed and running
 To verify the core business logic and service mapping in isolation:
 ```bash
 dotnet test
+```
 
 ## ✨ Main Features
 - **Real-Time Dashboards**: Automatic 30-second polling keeps task statuses (like "Reminded" badges) synced with background processes.
