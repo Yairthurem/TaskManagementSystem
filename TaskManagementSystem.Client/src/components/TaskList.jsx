@@ -22,28 +22,43 @@ export default function TaskList() {
     }
   }
 
+  // Localized date formatter (Israel format: dd/mm/yyyy HH:mm)
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'No Deadline';
+    const date = new Date(dateStr);
+    return date.toLocaleString('he-IL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+
   // Priority weights for sorting
   const priorityMap = { 'High': 2, 'Medium': 1, 'Low': 0 }
 
   // Clone, filter, and sort tasks
   let processedTasks = tasks ? [...tasks] : []
   
-  // Optional specific user filter
   if (selectedUserId) {
     processedTasks = processedTasks.filter(task => task.userId === parseInt(selectedUserId))
   }
 
-  // Sort by Priority DESC, then DueDate DESC
   processedTasks.sort((a, b) => {
     const pA = priorityMap[a.priority] ?? 0
     const pB = priorityMap[b.priority] ?? 0
     if (pB !== pA) return pB - pA // High priority first
     
-    // Sort by DueDate ascending (nearest first) if priorities match
-    // Tasks with no deadline are pushed to the very bottom
-    const dateA = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
-    const dateB = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
-    return dateA - dateB;
+    // Sort by DueDate descending if priorities match
+    if (!a.dueDate && !b.dueDate) return 0;
+    if (!a.dueDate) return 1; // a is null, put at bottom
+    if (!b.dueDate) return -1; // b is null, put at bottom
+
+    const dateA = new Date(a.dueDate).getTime();
+    const dateB = new Date(b.dueDate).getTime();
+    return dateB - dateA; // Late to early
   })
 
   return (
@@ -89,7 +104,7 @@ export default function TaskList() {
                 </div>
                 <div className="task-footer">
                   <p className="task-due-date">
-                    Due: {task.dueDate ? new Date(task.dueDate).toLocaleString() : 'No Deadline'}
+                    Due: {formatDate(task.dueDate)}
                   </p>
                   {task.reminderSent && <span className="badge reminded">🔔 REMINDED</span>}
                 </div>
