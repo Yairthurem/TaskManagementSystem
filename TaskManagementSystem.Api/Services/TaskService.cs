@@ -59,8 +59,8 @@ public class TaskService : ITaskService
         task.Priority = taskDto.Priority;
         task.UserId = taskDto.UserId;
 
-        // Reset reminder and clear logs if the new due date is in the future
-        if (task.DueDate.HasValue && task.DueDate.Value > DateTime.UtcNow)
+        // Reset reminder and clear logs if the new due date is in the future or removed (No Deadline)
+        if (!task.DueDate.HasValue || task.DueDate.Value > DateTime.UtcNow)
         {
             task.ReminderSent = false;
             task.RemindersLogs.Clear();

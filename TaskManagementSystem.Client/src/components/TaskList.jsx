@@ -85,8 +85,10 @@ export default function TaskList() {
           {processedTasks.length > 0 ? processedTasks.map(task => (
             <div key={task.id} className="task-item">
               <div className="task-content">
-                <h3>{task.title}</h3>
-                <p className="task-description">{task.description || "No description provided."}</p>
+                <h3 title={task.title}>{task.title}</h3>
+                <p className="task-description" title={task.description || "No description provided."}>
+                  {task.description || "No description provided."}
+                </p>
                 {!selectedUserId && (
                   <p className="task-assignee">
                     Assigned to: <span>
@@ -110,7 +112,7 @@ export default function TaskList() {
                 </div>
               </div>
               
-              <div className="d-flex-gap">
+              <div className="task-actions">
                 {getPriorityBadge(task.priority)}
                 <div className="d-flex-gap-sm">
                   <button 

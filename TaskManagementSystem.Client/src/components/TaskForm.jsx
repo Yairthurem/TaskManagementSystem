@@ -6,8 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useCreateTaskMutation, useUpdateTaskMutation, useGetTasksQuery, useGetUsersQuery, useGetTagsQuery } from '../store/apiSlice'
 
 const taskSchema = z.object({
-  title: z.string().min(1, "Title is required").max(100),
-  description: z.string().max(500).optional(),
+  title: z.string().min(1, "Title is required").max(100, "Title cannot exceed 100 characters"),
+  description: z.string().max(500, "Description cannot exceed 500 characters").optional(),
   dueDate: z.string().optional().or(z.literal('')).refine((val) => {
     if (!val) return true;
     const date = new Date(val);
@@ -35,7 +35,7 @@ export default function TaskForm() {
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation()
   const [isDataLoaded, setIsDataLoaded] = useState(false)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(taskSchema),
     defaultValues: { priority: 'Low', tagIds: [] }
   })
@@ -128,13 +128,23 @@ export default function TaskForm() {
         <div className="form-row">
             <div>
               <label htmlFor="dueDate" className="form-label">Due Date (Optional)</label>
-              <input 
-                id="dueDate"
-                type="datetime-local" 
-                className="form-control" 
-                {...register('dueDate')} 
-                min={minDate}
-              />
+              <div className="input-with-action">
+                <input 
+                  id="dueDate"
+                  type="datetime-local" 
+                  className="form-control" 
+                  {...register('dueDate')} 
+                  min={minDate}
+                />
+                <button 
+                  type="button" 
+                  className="btn-clear" 
+                  title="Clear Deadline"
+                  onClick={() => setValue('dueDate', '')}
+                >
+                  &times;
+                </button>
+              </div>
               {errors.dueDate && <span className="text-danger">{errors.dueDate.message}</span>}
             </div>
 

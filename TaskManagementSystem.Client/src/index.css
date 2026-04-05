@@ -75,16 +75,31 @@ body {
   transform: translateX(2px);
 }
 
+.task-content {
+  flex: 1;
+  min-width: 0; /* Critical for flex truncation */
+}
+
 .task-content h3 {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .task-description {
   font-size: 0.8rem;
   color: var(--text-muted);
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+  overflow-wrap: anywhere;
 }
 
 .task-assignee {
@@ -181,6 +196,13 @@ body {
   .header select {
     width: 100% !important;
   }
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .icon-btn {
@@ -378,4 +400,28 @@ body {
   font-size: 0.875rem;
   margin-top: 0.25rem;
   display: block;
+}
+
+.input-with-action {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-clear {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0 0.75rem;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-clear:hover {
+  background: #E5E7EB;
+  color: var(--danger);
 }
