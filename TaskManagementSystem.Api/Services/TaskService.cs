@@ -53,18 +53,21 @@ public class TaskService : ITaskService
         var task = await _taskRepository.GetTaskByIdAsync(id);
         if (task == null) return false;
 
+        var dueDateChanged = task.DueDate != taskDto.DueDate;
+        
         task.Title = taskDto.Title;
         task.Description = taskDto.Description;
         task.DueDate = taskDto.DueDate;
         task.Priority = taskDto.Priority;
         task.UserId = taskDto.UserId;
 
-        // Reset reminder and clear logs if the new due date is in the future or removed (No Deadline)
-        if (!task.DueDate.HasValue || task.DueDate.Value > DateTime.UtcNow)
+        // Reset reminder if the date was changed, removed, or is in the future
+        if (dueDateChanged || !task.DueDate.HasValue || task.DueDate.Value > DateTime.UtcNow)
         {
             task.ReminderSent = false;
             task.RemindersLogs.Clear();
         }
+        
 
         // Simplified many-to-many update: clear existing and insert new
         task.TaskTags.Clear();
