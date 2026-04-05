@@ -75,7 +75,7 @@ public class ReminderConsumerWorker : BackgroundService
                 context.RemindersLogs.Add(log);
                 await context.SaveChangesAsync(stoppingToken);
 
-                _logger.LogInformation("Reminder consumed and logged for Task {TaskId}", message.TaskId);
+                _logger.LogInformation("Hi your task is due (task {Title})", message.Title);
             }
         };
 
