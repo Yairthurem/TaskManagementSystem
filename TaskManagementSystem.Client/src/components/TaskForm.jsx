@@ -48,7 +48,8 @@ export default function TaskForm() {
         let localDateString = ''
         if (taskToEdit.dueDate) {
           const date = new Date(taskToEdit.dueDate)
-          localDateString = date.toISOString().slice(0, 16)
+          const offset = date.getTimezoneOffset() * 60000;
+          localDateString = new Date(date - offset).toISOString().slice(0, 16)
         }
 
         reset({
