@@ -9,6 +9,8 @@ services:
       - MSSQL_PID=Developer
     ports:
       - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -44,3 +46,6 @@ services:
 networks:
   default:
     name: task-hub-network
+
+volumes:
+  mssql_data:
