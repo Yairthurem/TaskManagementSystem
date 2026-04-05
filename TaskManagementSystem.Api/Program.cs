@@ -10,6 +10,9 @@ using TaskManagementSystem.Api.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Ensure logs are visible in Visual Studio Debug Output
+builder.Logging.AddDebug();
+
 // Add CORS policy for local React app
 builder.Services.AddCors(options =>
 {
