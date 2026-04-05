@@ -31,12 +31,10 @@ Docker installed and running
    - **API Swagger**: [http://localhost:5001/swagger](http://localhost:5001/swagger) 🟢
    - **Frontend UI**: [http://localhost:8080](http://localhost:8080) 🟢
    - **RabbitMQ Dashboard**: [http://localhost:15673](http://localhost:15673) (guest/guest) 🟢
-
-### Automated Tests 
-To verify the core business logic and service mapping in isolation:
-```bash
-dotnet test
-```
+   - To watch logs 
+   ```bash
+   docker compose logs api -f
+   ```
 
 ## ✨ Main Features
 - **Real-Time Dashboards**: Automatic 30-second polling keeps task statuses (like "Reminded" badges) synced with background processes.
