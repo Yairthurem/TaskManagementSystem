@@ -57,7 +57,7 @@ public class TaskReminderWorker : BackgroundService
                 }
             }
 
-            int pollingInterval = _configuration.GetValue<int>("RabbitMqSettings:PollingIntervalSeconds", 30);
+            int pollingInterval = _configuration.GetValue<int>("RabbitMqSettings:PollingIntervalSeconds", 10);
             await Task.Delay(TimeSpan.FromSeconds(pollingInterval), stoppingToken);
         }
     }

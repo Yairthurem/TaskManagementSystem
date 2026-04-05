@@ -6,7 +6,7 @@ export default function TaskList() {
   const navigate = useNavigate()
   const [selectedUserId, setSelectedUserId] = useState('')
   const { data: tasks, isLoading, isError } = useGetTasksQuery(undefined, { 
-    pollingInterval: 20000 // Refresh every 20s to catch background updates
+    pollingInterval: 5000 // Refresh every 5s to catch background updates
   })
   const { data: users } = useGetUsersQuery()
   const [deleteTask] = useDeleteTaskMutation()
