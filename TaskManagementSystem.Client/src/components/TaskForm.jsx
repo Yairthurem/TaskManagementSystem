@@ -48,16 +48,15 @@ export default function TaskForm() {
         let localDateString = ''
         if (taskToEdit.dueDate) {
           const date = new Date(taskToEdit.dueDate)
-          const localTime = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-          localDateString = localTime.toISOString().slice(0, 16)
+          localDateString = date.toISOString().slice(0, 16)
         }
 
         reset({
           title: taskToEdit.title,
           description: taskToEdit.description || '',
           dueDate: localDateString,
+          userId: taskToEdit.userId ? taskToEdit.userId.toString() : '',
           priority: taskToEdit.priority,
-          userId: taskToEdit.userId.toString(),
           tagIds: taskToEdit.tags ? tags?.filter(t => taskToEdit.tags.includes(t.name)).map(t => t.id.toString()) : []
         })
         setIsDataLoaded(true)
@@ -114,21 +113,22 @@ export default function TaskForm() {
       
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group">
-          <label className="form-label">Task Title</label>
-          <input className="form-control" {...register('title')} placeholder="e.g., Run security audits" />
+          <label htmlFor="title" className="form-label">Task Title</label>
+          <input id="title" className="form-control" {...register('title')} placeholder="e.g., Run security audits" />
           {errors.title && <span className="text-danger">{errors.title.message}</span>}
         </div>
 
         <div className="form-group">
-          <label className="form-label">Description (Optional)</label>
-          <textarea className="form-control" {...register('description')} rows="3" placeholder="Additional details..." />
+          <label htmlFor="description" className="form-label">Description (Optional)</label>
+          <textarea id="description" className="form-control" {...register('description')} rows="3" placeholder="Additional details..." />
           {errors.description && <span className="text-danger">{errors.description.message}</span>}
         </div>
 
         <div className="form-row">
             <div>
-              <label className="form-label">Due Date (Optional)</label>
+              <label htmlFor="dueDate" className="form-label">Due Date (Optional)</label>
               <input 
+                id="dueDate"
                 type="datetime-local" 
                 className="form-control" 
                 {...register('dueDate')} 
@@ -138,8 +138,8 @@ export default function TaskForm() {
             </div>
 
             <div>
-              <label className="form-label">Priority</label>
-              <select className="form-control" {...register('priority')}>
+              <label htmlFor="priority" className="form-label">Priority</label>
+              <select id="priority" className="form-control" {...register('priority')}>
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
@@ -148,8 +148,8 @@ export default function TaskForm() {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Assign To</label>
-          <select className="form-control" {...register('userId')}>
+          <label htmlFor="userId" className="form-label">Assign To</label>
+          <select id="userId" className="form-control" {...register('userId')}>
             <option value="">Select a user...</option>
             {users && users.map(u => (
               <option key={u.id} value={u.id}>{u.firstName} {u.lastName}</option>
@@ -160,8 +160,8 @@ export default function TaskForm() {
         </div>
         
         <div className="form-group">
-          <label className="form-label">Tags</label>
-          <select className="form-control tag-select-field" multiple {...register('tagIds')}>
+          <label htmlFor="tagIds" className="form-label">Tags</label>
+          <select id="tagIds" className="form-control tag-select-field" multiple {...register('tagIds')}>
             {tags && tags.map(t => (
               <option key={t.id} value={t.id}>{t.name}</option>
             ))}

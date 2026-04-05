@@ -1,58 +1,87 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
-import { MemoryRouter } from 'react-router-dom'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { describe, it, expect } from 'vitest'
 import TaskForm from '../components/TaskForm'
-import * as apiSlice from '../store/apiSlice'
+import { renderWithProviders } from './test-utils'
+import { http, HttpResponse } from 'msw'
+import { server } from './msw/server'
 
-// Mock the API hooks
-vi.mock('../store/apiSlice', async () => {
-  const actual = await vi.importActual('../store/apiSlice')
-  return {
-    ...actual,
-    useGetUsersQuery: vi.fn(),
-    useGetTagsQuery: vi.fn(),
-    useGetTasksQuery: vi.fn(),
-    useCreateTaskMutation: vi.fn(),
-    useUpdateTaskMutation: vi.fn(),
-  }
-})
-
-describe('TaskForm Component', () => {
-  it('renders correctly in creation mode', async () => {
-    // Mock successful data loading
-    apiSlice.useGetUsersQuery.mockReturnValue({ data: [{ id: 1, firstName: 'John', lastName: 'Doe' }], isLoading: false })
-    apiSlice.useGetTagsQuery.mockReturnValue({ data: [{ id: 1, name: 'Work' }], isLoading: false })
-    apiSlice.useGetTasksQuery.mockReturnValue({ data: [], isLoading: false })
-    apiSlice.useCreateTaskMutation.mockReturnValue([vi.fn(), { isLoading: false }])
-    apiSlice.useUpdateTaskMutation.mockReturnValue([vi.fn(), { isLoading: false }])
+describe('TaskForm Component with MSW', () => {
+  it('renders all form fields correctly', async () => {
+    renderWithProviders(<TaskForm />)
     
-    render(
-      <MemoryRouter>
-        <TaskForm />
-      </MemoryRouter>
-    )
-
-    expect(screen.getByText('Create New Task')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText(/Run security audits/i)).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /Create New Task/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/Task Title/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Assign To/i)).toBeInTheDocument()
+    
+    const userOption = await screen.findByText('Bob Smith')
+    expect(userOption).toBeInTheDocument()
   })
 
-  it('shows validation errors for empty fields', async () => {
-    apiSlice.useGetUsersQuery.mockReturnValue({ data: [], isLoading: false })
-    apiSlice.useGetTagsQuery.mockReturnValue({ data: [], isLoading: false })
-    apiSlice.useGetTasksQuery.mockReturnValue({ data: [], isLoading: false })
-    apiSlice.useCreateTaskMutation.mockReturnValue([vi.fn(), { isLoading: false }])
-    apiSlice.useUpdateTaskMutation.mockReturnValue([vi.fn(), { isLoading: false }])
+  it('shows validation errors for required fields on empty submit', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<TaskForm />)
 
-    render(
-      <MemoryRouter>
-        <TaskForm />
-      </MemoryRouter>
-    )
-
-    const submitBtn = screen.getByText('Create Task')
-    fireEvent.click(submitBtn)
+    await screen.findByRole('heading', { name: /Create New Task/i })
+    
+    const submitBtn = screen.getByRole('button', { name: /Create Task/i })
+    await user.click(submitBtn)
 
     expect(await screen.findByText(/Title is required/i)).toBeInTheDocument()
     expect(await screen.findByText(/Please assign a user/i)).toBeInTheDocument()
+  })
+
+  it('submits the form successfully for a new task', async () => {
+    const user = userEvent.setup()
+    let capturedPayload = null
+    
+    server.use(
+      http.post('*/tasks', async ({ request }) => {
+        capturedPayload = await request.json()
+        return HttpResponse.json({ id: 999, ...capturedPayload }, { status: 201 })
+      })
+    )
+
+    renderWithProviders(<TaskForm />)
+    await screen.findByRole('heading', { name: /Create New Task/i })
+
+    // Now linked correctly via htmlFor/id
+    const titleInput = screen.getByLabelText(/Task Title/i)
+    await user.type(titleInput, 'New Test Task')
+    
+    await screen.findByText('Bob Smith')
+    await user.selectOptions(screen.getByLabelText(/Assign To/i), '1')
+    await user.selectOptions(screen.getByLabelText(/Priority/i), 'High')
+    
+    // Fill in the optional but schema-validated Due Date
+    const dateInput = screen.getByLabelText(/Due Date/i)
+    await user.type(dateInput, '2027-12-31T23:59')
+
+    await user.click(screen.getByRole('button', { name: /Create Task/i }))
+
+    await waitFor(() => {
+      if (!capturedPayload) throw new Error('Payload not captured')
+    }, { timeout: 4000 })
+    
+    expect(capturedPayload).toMatchObject({
+      title: 'New Test Task',
+      userId: 1,
+      priority: 'High'
+    })
+  })
+
+  it('renders in edit mode and populates data', async () => {
+    renderWithProviders(<TaskForm />, {
+      route: '/edit-task/123',
+      path: '/edit-task/:id'
+    })
+
+    expect(await screen.findByRole('heading', { name: /Editing Task/i }, { timeout: 3000 })).toBeInTheDocument()
+    
+    await waitFor(() => {
+        // Use getByDisplayValue to verify form population
+        expect(screen.getByDisplayValue('Existing Task')).toBeInTheDocument()
+        expect(screen.getByDisplayValue('Old desc')).toBeInTheDocument()
+    }, { timeout: 3000 })
   })
 })
