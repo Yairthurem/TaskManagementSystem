@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Api.DTOs;
 using TaskManagementSystem.Api.Interfaces;
@@ -10,17 +9,10 @@ namespace TaskManagementSystem.Api.Controllers;
 public class TasksController : ControllerBase
 {
     private readonly ITaskService _taskService;
-    private readonly IValidator<TaskCreateDto> _createValidator;
-    private readonly IValidator<TaskUpdateDto> _updateValidator;
 
-    public TasksController(
-        ITaskService taskService,
-        IValidator<TaskCreateDto> createValidator,
-        IValidator<TaskUpdateDto> updateValidator)
+    public TasksController(ITaskService taskService)
     {
         _taskService = taskService;
-        _createValidator = createValidator;
-        _updateValidator = updateValidator;
     }
 
     [HttpGet]
@@ -41,9 +33,6 @@ public class TasksController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateTask([FromBody] TaskCreateDto taskDto)
     {
-        var validationResult = await _createValidator.ValidateAsync(taskDto);
-        if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
-
         var createdTask = await _taskService.CreateTaskAsync(taskDto);
         return CreatedAtAction(nameof(GetTask), new { id = createdTask.Id }, createdTask);
     }
@@ -51,9 +40,6 @@ public class TasksController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTask(int id, [FromBody] TaskUpdateDto taskDto)
     {
-        var validationResult = await _updateValidator.ValidateAsync(taskDto);
-        if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
-
         var success = await _taskService.UpdateTaskAsync(id, taskDto);
         if (!success) return NotFound();
 
