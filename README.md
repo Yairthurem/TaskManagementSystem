@@ -31,32 +31,10 @@ Docker installed and running
    - **API Swagger**: [http://localhost:5001/swagger](http://localhost:5001/swagger) 🟢
    - **Frontend UI**: [http://localhost:8080](http://localhost:8080) 🟢
    - **RabbitMQ Dashboard**: [http://localhost:15673](http://localhost:15673) (guest/guest) 🟢
-
-### Automated Tests 
-To verify the core business logic and service mapping in isolation:
-```bash
-dotnet test
-```
-
-## ✨ Main Features
-- **Real-Time Dashboards**: Automatic 30-second polling keeps task statuses (like "Reminded" badges) synced with background processes.
-- **Background Workers**: Reminders are triggered by a `.NET HostedService` and processed via **RabbitMQ** for high reliability.
-- **Smart Sorting**: Tasks are prioritised by level (High > Medium > Low) and then by the nearest due date.
-- **Robust Validation**: Combined client-side (Zod) and server-side (FluentValidation) ensures data integrity.
-- **Professional Seeding**: Pre-loaded with full user details (Alice Smith, Bob Jones) and tags.
-
-## 👨‍💻 Local Development (Alternative)
-
-### 1. Database
-Update `appsettings.json` connection string and run:
-`dotnet ef database update`
-### 2. Backend
-`cd TaskManagementSystem.Api`
-`dotnet run`
-### 3. Frontend
-`cd TaskManagementSystem.Client`
-`npm install`
-`npm run dev`
+   - To watch logs 
+   ```bash
+   docker compose logs api -f
+   ```
 
 ## ✨ SQL query (also resides in the tech spec)
 SELECT t.Id, t.Title, COUNT(tt.TagId) AS TagCount, STRING_AGG(tg.Name, ', ') AS TagNames 
